@@ -1,18 +1,18 @@
 # Task Manager
 
-A Kanban-style task management app built with React, MUI, and Vite. Tasks are organized across columns (To Do, In Progress, Done), with support for image attachments, favorites, deadlines, and i18n.
+A Kanban-style task management app built with React, MUI, and Vite. Tasks are organized across columns (To Do, In Progress, Done), with support for multiple image attachments, favorites, deadlines, and i18n.
 
 ---
 
 ## Features
 
 - **Kanban Board** — multiple columns with individual task counts
-- **Add / Edit / Delete Tasks** — name, description, deadline, and image attachment
-- **Image Attachments** — attach JPEG, PNG, GIF, or WebP images (max 5 MB) to any task
+- **Add / Edit / Delete Tasks** — name, description, deadline, and image attachments
+- **Multiple Image Attachments** — attach multiple JPEG, PNG, GIF, or WebP images (max 5 MB each) per task; preview thumbnails with per-image remove; click any thumbnail to open a full-screen lightbox
 - **Favorite Tasks** — mark tasks as favorites; sort column pins favorites to the top
-- **Move Tasks** — move a task between any columns
+- **Move Tasks** — move a task between columns from the card or update status directly on the task detail page
 - **Add Columns** — create custom columns on the fly
-- **Task Detail Page** — full view at `/task/:id` with attachment display
+- **Task Detail Page** — click any task card to open the full detail view at `/task/:id`; update status (column), view all images in a grid, open any image in a lightbox
 - **Internationalization** — English and Spanish via i18next (toggle on the board)
 - **Accessibility** — skip-to-content link, ARIA labels, keyboard-navigable dialogs
 - **Error Boundary** — catches render errors and shows a fallback UI
@@ -39,18 +39,18 @@ A Kanban-style task management app built with React, MUI, and Vite. Tasks are or
 ### Prerequisites
 
 - Node.js 18+
-- Yarn
+- npm or Yarn
 
 ### Install
 
 ```bash
-yarn install
+npm install
 ```
 
 ### Run in development
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
@@ -58,13 +58,13 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 ### Build for production
 
 ```bash
-yarn build
+npm run build
 ```
 
 ### Preview production build
 
 ```bash
-yarn preview
+npm run preview
 ```
 
 ---
@@ -73,10 +73,10 @@ yarn preview
 
 ```bash
 # Run all tests with coverage
-yarn test
+npm test
 
 # Watch mode
-yarn test:watch
+npm run test:watch
 ```
 
 Test files live alongside the components they test (`*.test.jsx`).
@@ -88,23 +88,24 @@ Test files live alongside the components they test (`*.test.jsx`).
 ```
 src/
 ├── components/
-│   ├── Board/          # Main board with columns
-│   ├── Column/         # Single column with task list
-│   ├── TaskCard/       # Task card with actions (edit, delete, move, favorite)
-│   ├── TaskDialog/     # Add/edit task modal with image upload
-│   ├── ErrorBoundary/  # Top-level error boundary
-│   └── SkipLink/       # Accessibility skip-to-content link
+│   ├── Board/           # Main board with columns
+│   ├── Column/          # Single column with task list
+│   ├── TaskCard/        # Clickable task card (navigates to detail on click)
+│   ├── TaskDialog/      # Add/edit task modal with multi-image upload
+│   ├── ImageLightbox/   # Full-screen image viewer dialog
+│   ├── ErrorBoundary/   # Top-level error boundary
+│   └── SkipLink/        # Accessibility skip-to-content link
 ├── context/
-│   └── BoardContext.jsx  # Global state (useReducer) + actions
+│   └── BoardContext.jsx   # Global state (useReducer) + actions
 ├── pages/
-│   └── TaskDetail/     # Full task detail page (/task/:id)
+│   └── TaskDetail/      # Task detail page (/task/:id) with status selector
 ├── i18n/
-│   ├── en.json         # English strings
-│   ├── es.json         # Spanish strings
-│   └── index.js        # i18next configuration
+│   ├── en.json          # English strings
+│   ├── es.json          # Spanish strings
+│   └── index.js         # i18next configuration
 ├── utils/
-│   └── security.js     # Input sanitization, file validation, security logging
-└── App.jsx             # Root: theme, routing, providers
+│   └── security.js      # Input sanitization, file validation, security logging
+└── App.jsx              # Root: theme, routing, providers
 ```
 
 ---
@@ -116,7 +117,3 @@ src/
 - Security events (e.g. invalid file upload attempts) are logged via `logSecurityEvent` — replace the `console.warn` call with your monitoring service (Sentry, Datadog, etc.) for production use.
 
 ---
-
-## License
-
-MIT
