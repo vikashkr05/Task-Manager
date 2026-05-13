@@ -1,5 +1,5 @@
 import { Box, Typography, Button, IconButton, Paper } from '@mui/material';
-import { Add, SortByAlpha } from '@mui/icons-material';
+import { Add, SwapVert } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useBoard } from '../../context/BoardContext';
 import TaskCard from '../TaskCard/TaskCard';
@@ -35,7 +35,7 @@ export default function Column({ column, onAddTask, onEditTask, onAnnounce }) {
           onClick={() => sortColumn(column.id)}
           aria-label={t('column.sortAriaLabel')}
         >
-          <SortByAlpha fontSize="small" />
+          <SwapVert fontSize="small" />
         </IconButton>
       </Box>
 
