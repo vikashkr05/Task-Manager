@@ -2,20 +2,22 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box, Typography, Button, Chip, Paper, AppBar, Toolbar,
-  IconButton, Divider,
+  IconButton, Divider, Select, MenuItem, FormControl,
 } from '@mui/material';
 import { ArrowBack, Edit, Star, StarBorder } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useBoard } from '../../context/BoardContext';
 import TaskDialog from '../../components/TaskDialog/TaskDialog';
+import ImageLightbox from '../../components/ImageLightbox/ImageLightbox';
 
 export default function TaskDetail() {
   const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
-  const { state, toggleFavorite } = useBoard();
+  const { state, toggleFavorite, moveTask } = useBoard();
   const task = state.tasks[id];
   const [editOpen, setEditOpen] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState(null);
 
   if (!task) {
     return (
@@ -82,9 +84,20 @@ export default function TaskDetail() {
           {column && (
             <Box sx={{ mb: 3 }}>
               <Typography variant="overline" color="text.secondary" component="h3">
-                {t('taskDetail.columnLabel')}
+                {t('taskDetail.statusLabel')}
               </Typography>
-              <Typography variant="body1">{column.name}</Typography>
+              <FormControl size="small" sx={{ mt: 0.5 }}>
+                <Select
+                  value={column.id}
+                  onChange={(e) => moveTask(id, column.id, e.target.value)}
+                  inputProps={{ 'aria-label': t('taskDetail.statusLabel') }}
+                  data-testid="status-select"
+                >
+                  {state.columns.map(col => (
+                    <MenuItem key={col.id} value={col.id}>{col.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Box>
           )}
 
@@ -114,17 +127,23 @@ export default function TaskDetail() {
             )}
           </Box>
 
-          {task.image && (
+          {task.images && task.images.length > 0 && (
             <Box sx={{ mb: 3 }}>
               <Typography variant="overline" color="text.secondary" component="h3">
-                {t('taskDetail.attachmentLabel')}
+                {t('taskDetail.attachmentsLabel')}
               </Typography>
-              <Box
-                component="img"
-                src={task.image}
-                alt={t('task.imageAlt')}
-                sx={{ display: 'block', maxWidth: '100%', mt: 1, borderRadius: 2, boxShadow: 1 }}
-              />
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 1 }}>
+                {task.images.map((img, idx) => (
+                  <Box
+                    key={idx}
+                    component="img"
+                    src={img}
+                    alt={`${t('task.imageAlt')} ${idx + 1}`}
+                    onClick={() => setLightboxSrc(img)}
+                    sx={{ width: 200, height: 150, objectFit: 'cover', borderRadius: 2, boxShadow: 1, cursor: 'pointer', transition: 'opacity 0.15s', '&:hover': { opacity: 0.85 } }}
+                  />
+                ))}
+              </Box>
             </Box>
           )}
         </Paper>
@@ -135,6 +154,11 @@ export default function TaskDetail() {
         onClose={() => setEditOpen(false)}
         task={task}
         columnId={null}
+      />
+      <ImageLightbox
+        src={lightboxSrc}
+        alt={t('task.imageAlt')}
+        onClose={() => setLightboxSrc(null)}
       />
     </Box>
   );

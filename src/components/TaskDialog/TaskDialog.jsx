@@ -1,26 +1,28 @@
 import { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Button, Box, Alert,
+  TextField, Button, Box, Alert, IconButton,
 } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useBoard } from '../../context/BoardContext';
 import { validateTaskForm, validateImageFile, logSecurityEvent } from '../../utils/security';
+import ImageLightbox from '../ImageLightbox/ImageLightbox';
 
 export default function TaskDialog({ open, onClose, task, columnId, onAnnounce }) {
   const { t } = useTranslation();
   const { addTask, editTask } = useBoard();
   const isEdit = Boolean(task);
 
-  const [form, setForm]           = useState({ name: '', description: '', deadline: '', image: null });
+  const [form, setForm]           = useState({ name: '', description: '', deadline: '', images: [] });
   const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     if (open) {
       setForm(
         task
-          ? { name: task.name, description: task.description || '', deadline: task.deadline || '', image: task.image || null }
-          : { name: '', description: '', deadline: '', image: null }
+          ? { name: task.name, description: task.description || '', deadline: task.deadline || '', images: task.images || [] }
+          : { name: '', description: '', deadline: '', images: [] }
       );
       setFieldErrors({});
     }
@@ -34,20 +36,31 @@ export default function TaskDialog({ open, onClose, task, columnId, onAnnounce }
 
   // OWASP A03/A08: validate MIME type and size before reading file into memory.
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const err = validateImageFile(file);
-    if (err) {
-      logSecurityEvent('InvalidFileUpload', { type: file.type, size: file.size });
-      setFieldErrors(prev => ({ ...prev, image: err }));
-      e.target.value = '';
-      return;
-    }
-    setFieldErrors(prev => ({ ...prev, image: undefined }));
-    const reader = new FileReader();
-    reader.onload = (ev) => setForm(prev => ({ ...prev, image: ev.target.result }));
-    reader.readAsDataURL(file);
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    let firstError = null;
+    const valid = files.filter(file => {
+      const err = validateImageFile(file);
+      if (err) {
+        logSecurityEvent('InvalidFileUpload', { type: file.type, size: file.size });
+        if (!firstError) firstError = err;
+        return false;
+      }
+      return true;
+    });
+    setFieldErrors(prev => ({ ...prev, image: firstError || undefined }));
+    valid.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (ev) => setForm(prev => ({ ...prev, images: [...prev.images, ev.target.result] }));
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
   };
+
+  const removeImage = (idx) =>
+    setForm(prev => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }));
+
+  const [lightboxSrc, setLightboxSrc] = useState(null);
 
   const handleSubmit = () => {
     // OWASP A04: client-side validation (server must mirror these checks).
@@ -119,6 +132,7 @@ export default function TaskDialog({ open, onClose, task, columnId, onAnnounce }
             <input
               type="file"
               accept="image/jpeg,image/png,image/gif,image/webp"
+              multiple
               hidden
               onChange={handleImageChange}
               data-testid="image-file-input"
@@ -127,26 +141,33 @@ export default function TaskDialog({ open, onClose, task, columnId, onAnnounce }
           {fieldErrors.image && (
             <Alert severity="error" sx={{ mt: 1 }}>{t(fieldErrors.image)}</Alert>
           )}
-          {form.image && (
-            <Box sx={{ mt: 1 }}>
-              <Box
-                component="img"
-                src={form.image}
-                alt={t('taskDialog.imagePreview')}
-                sx={{ maxWidth: '100%', maxHeight: 200, borderRadius: 1, display: 'block' }}
-              />
-              <Button
-                size="small"
-                color="error"
-                onClick={() => setForm(prev => ({ ...prev, image: null }))}
-                data-testid="remove-image-btn"
-              >
-                {t('taskDialog.removeImage')}
-              </Button>
+          {form.images.length > 0 && (
+            <Box sx={{ mt: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {form.images.map((img, idx) => (
+                <Box key={idx} sx={{ position: 'relative', width: 100, height: 80 }}>
+                  <Box
+                    component="img"
+                    src={img}
+                    alt={`${t('taskDialog.imagePreview')} ${idx + 1}`}
+                    onClick={() => setLightboxSrc(img)}
+                    sx={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 1, display: 'block', cursor: 'pointer' }}
+                  />
+                  <IconButton
+                    size="small"
+                    onClick={() => removeImage(idx)}
+                    data-testid={`remove-image-btn-${idx}`}
+                    sx={{ position: 'absolute', top: 2, right: 2, bgcolor: 'rgba(0,0,0,0.55)', color: 'white', p: 0.25, '&:hover': { bgcolor: 'rgba(0,0,0,0.75)' } }}
+                    aria-label={`${t('taskDialog.removeImage')} ${idx + 1}`}
+                  >
+                    <Close sx={{ fontSize: 14 }} />
+                  </IconButton>
+                </Box>
+              ))}
             </Box>
           )}
         </Box>
       </DialogContent>
+      <ImageLightbox src={lightboxSrc} alt={t('taskDialog.imagePreview')} onClose={() => setLightboxSrc(null)} />
       <DialogActions>
         <Button onClick={onClose} data-testid="dialog-cancel-btn">{t('common.cancel')}</Button>
         <Button onClick={handleSubmit} variant="contained" data-testid="dialog-submit-btn">

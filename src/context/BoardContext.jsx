@@ -4,18 +4,18 @@ import { sanitizeText } from '../utils/security';
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
 // OWASP A03: strip HTML from all text fields before they enter the state tree.
-const sanitizePayload = ({ name, description, deadline, image }) => ({
+const sanitizePayload = ({ name, description, deadline, images }) => ({
   name: sanitizeText(name),
   description: sanitizeText(description),
   deadline: deadline || '',
-  image: image || null,
+  images: Array.isArray(images) ? images : [],
 });
 
 const DEMO_TASKS = {
-  't1': { id: 't1', name: 'Design database schema', description: 'Model the entities and relationships for the task manager', deadline: '2026-05-20', image: null, favorite: true },
-  't2': { id: 't2', name: 'Implement authentication', description: 'Add user login and registration with JWT', deadline: '2026-05-25', image: null, favorite: false },
-  't3': { id: 't3', name: 'Write unit tests', description: 'Cover all components with React Testing Library', deadline: '2026-05-30', image: null, favorite: false },
-  't4': { id: 't4', name: 'Set up CI/CD pipeline', description: 'Configure GitHub Actions for automated testing and deployment', deadline: '2026-06-01', image: null, favorite: false },
+  't1': { id: 't1', name: 'Design database schema', description: 'Model the entities and relationships for the task manager', deadline: '2026-05-20', images: [], favorite: true },
+  't2': { id: 't2', name: 'Implement authentication', description: 'Add user login and registration with JWT', deadline: '2026-05-25', images: [], favorite: false },
+  't3': { id: 't3', name: 'Write unit tests', description: 'Cover all components with React Testing Library', deadline: '2026-05-30', images: [], favorite: false },
+  't4': { id: 't4', name: 'Set up CI/CD pipeline', description: 'Configure GitHub Actions for automated testing and deployment', deadline: '2026-06-01', images: [], favorite: false },
 };
 
 export const initialState = {
