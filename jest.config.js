@@ -10,6 +10,8 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|svg|webp|ico)$': '<rootDir>/__mocks__/fileMock.js',
+    '^react-i18next$': '<rootDir>/__mocks__/react-i18next.js',
+    '^i18next$': '<rootDir>/__mocks__/i18next.js',
   },
   collectCoverageFrom: [
     'src/**/*.{js,jsx}',

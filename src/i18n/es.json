@@ -1,0 +1,69 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "goBack": "volver",
+    "addToFavorites": "agregar a favoritos",
+    "removeFromFavorites": "quitar de favoritos",
+    "favorite": "Favorito",
+    "close": "Cerrar"
+  },
+  "board": {
+    "title": "Tablero de Tareas",
+    "addColumn": "Agregar Columna",
+    "addColumnDialogTitle": "Agregar Nueva Columna",
+    "columnNameLabel": "Nombre de Columna",
+    "addColumnBtn": "Agregar Columna",
+    "switchLang": "Cambiar idioma"
+  },
+  "column": {
+    "addTask": "Agregar Tarea",
+    "sortAriaLabel": "ordenar columna",
+    "taskCount": "({{count}})"
+  },
+  "task": {
+    "duePrefix": "Vence:",
+    "viewDetails": "ver detalles de la tarea",
+    "editAriaLabel": "editar tarea",
+    "deleteAriaLabel": "eliminar tarea",
+    "moveAriaLabel": "mover tarea a columna",
+    "imageAlt": "Adjunto de la tarea"
+  },
+  "taskDialog": {
+    "addTitle": "Agregar Tarea",
+    "editTitle": "Editar Tarea",
+    "nameLabel": "Nombre de la Tarea",
+    "descriptionLabel": "Descripción",
+    "deadlineLabel": "Fecha Límite",
+    "attachImage": "Adjuntar Imagen",
+    "removeImage": "Eliminar Imagen",
+    "imagePreview": "Vista previa de imagen",
+    "addBtn": "Agregar Tarea",
+    "saveBtn": "Guardar Cambios",
+    "nameRequired": "El nombre es requerido",
+    "nameTooLong": "El nombre debe tener 200 caracteres o menos",
+    "descriptionTooLong": "La descripción debe tener 2.000 caracteres o menos",
+    "invalidDate": "Ingrese una fecha válida (AAAA-MM-DD)",
+    "invalidFile": "Solo se aceptan imágenes JPEG, PNG, GIF o WebP",
+    "fileTooLarge": "La imagen debe ser menor de 5 MB"
+  },
+  "taskDetail": {
+    "heading": "Detalles de la Tarea",
+    "notFound": "Tarea no encontrada.",
+    "backToBoard": "Volver al Tablero",
+    "columnLabel": "Columna",
+    "deadlineLabel": "Fecha Límite",
+    "descriptionLabel": "Descripción",
+    "noDescription": "Sin descripción.",
+    "attachmentLabel": "Adjunto",
+    "favoriteChip": "Favorito"
+  },
+  "a11y": {
+    "skipToMain": "Saltar al contenido principal",
+    "boardRegion": "Tablero de tareas",
+    "taskAdded": "Tarea agregada",
+    "taskUpdated": "Tarea actualizada",
+    "taskDeleted": "Tarea eliminada",
+    "taskMoved": "Tarea movida"
+  }
+}

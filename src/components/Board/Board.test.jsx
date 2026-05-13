@@ -33,7 +33,8 @@ describe('Board', () => {
   it('opens the Add Column dialog when the toolbar button is clicked', () => {
     renderBoard();
     fireEvent.click(screen.getByTestId('add-column-btn'));
-    expect(screen.getByRole('heading', { name: /Add Column/i })).toBeInTheDocument();
+    // The dialog is open when the column-name input is in the DOM
+    expect(screen.getByTestId('column-name-input')).toBeInTheDocument();
   });
 
   it('adds a new column and renders it after submission', () => {
@@ -47,7 +48,8 @@ describe('Board', () => {
   it('opens the task add dialog when the Add Task button in a column is clicked', () => {
     renderBoard();
     fireEvent.click(screen.getByTestId('add-task-btn-col-1'));
-    expect(screen.getByRole('heading', { name: /Add Task/i })).toBeInTheDocument();
+    // Task name input appears when the add-task dialog opens
+    expect(screen.getByTestId('task-name-input')).toBeInTheDocument();
   });
 
   it('renders Add Task buttons for every column', () => {

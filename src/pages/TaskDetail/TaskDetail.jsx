@@ -5,10 +5,12 @@ import {
   IconButton, Divider,
 } from '@mui/material';
 import { ArrowBack, Edit, Star, StarBorder } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import { useBoard } from '../../context/BoardContext';
 import TaskDialog from '../../components/TaskDialog/TaskDialog';
 
 export default function TaskDetail() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { state, toggleFavorite } = useBoard();
@@ -17,30 +19,34 @@ export default function TaskDetail() {
 
   if (!task) {
     return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h6" gutterBottom>Task not found.</Typography>
-        <Button variant="outlined" onClick={() => navigate('/')}>
-          Back to Board
-        </Button>
+      // Accessibility: role="main" provides landmark even in the not-found state
+      <Box component="main" sx={{ p: 4, textAlign: 'center' }}>
+        <Typography variant="h6" gutterBottom>{t('taskDetail.notFound')}</Typography>
+        <Button variant="outlined" onClick={() => navigate('/')}>{t('taskDetail.backToBoard')}</Button>
       </Box>
     );
   }
 
   const column = state.columns.find(col => col.taskIds.includes(id));
+  const favLabel = task.favorite ? t('common.removeFromFavorites') : t('common.addToFavorites');
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static" elevation={1}>
+      <AppBar position="static" elevation={1} component="header">
         <Toolbar>
-          <IconButton color="inherit" onClick={() => navigate('/')} edge="start" aria-label="go back">
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1, ml: 1 }}>Task Details</Typography>
           <IconButton
             color="inherit"
-            onClick={() => toggleFavorite(id)}
-            aria-label={task.favorite ? 'remove from favorites' : 'add to favorites'}
+            onClick={() => navigate('/')}
+            edge="start"
+            aria-label={t('common.goBack')}
           >
+            <ArrowBack />
+          </IconButton>
+          {/* Accessibility: visually the AppBar acts as nav; the h1 is the page title */}
+          <Typography component="h1" variant="h6" sx={{ flexGrow: 1, ml: 1 }}>
+            {t('taskDetail.heading')}
+          </Typography>
+          <IconButton color="inherit" onClick={() => toggleFavorite(id)} aria-label={favLabel}>
             {task.favorite ? <Star /> : <StarBorder />}
           </IconButton>
           <Button
@@ -49,56 +55,74 @@ export default function TaskDetail() {
             onClick={() => setEditOpen(true)}
             data-testid="edit-task-btn"
           >
-            Edit
+            {t('common.edit')}
           </Button>
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ p: 3, flexGrow: 1, overflowY: 'auto' }}>
+      {/* Accessibility: <main> landmark with skip-link target */}
+      <Box
+        component="main"
+        id="main-content"
+        tabIndex={-1}
+        sx={{ p: 3, flexGrow: 1, overflowY: 'auto', outline: 'none' }}
+      >
         <Paper sx={{ p: 3, maxWidth: 720, mx: 'auto' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-            <Typography variant="h4" sx={{ flexGrow: 1 }}>{task.name}</Typography>
-            {task.favorite && <Chip label="Favorite" color="warning" size="small" icon={<Star />} />}
+            {/* Accessibility: h2 because this is the primary content heading under the h1 in the AppBar */}
+            <Typography component="h2" variant="h4" sx={{ flexGrow: 1 }}>
+              {task.name}
+            </Typography>
+            {task.favorite && (
+              <Chip label={t('taskDetail.favoriteChip')} color="warning" size="small" icon={<Star />} />
+            )}
           </Box>
           <Divider sx={{ my: 2 }} />
 
           {column && (
             <Box sx={{ mb: 3 }}>
-              <Typography variant="overline" color="text.secondary">Column</Typography>
+              <Typography variant="overline" color="text.secondary" component="h3">
+                {t('taskDetail.columnLabel')}
+              </Typography>
               <Typography variant="body1">{column.name}</Typography>
             </Box>
           )}
 
           {task.deadline && (
             <Box sx={{ mb: 3 }}>
-              <Typography variant="overline" color="text.secondary">Deadline</Typography>
+              <Typography variant="overline" color="text.secondary" component="h3">
+                {t('taskDetail.deadlineLabel')}
+              </Typography>
               <Box sx={{ mt: 0.5 }}>
                 <Chip label={task.deadline} color="primary" />
               </Box>
             </Box>
           )}
 
-          {task.description ? (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="overline" color="text.secondary">Description</Typography>
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="overline" color="text.secondary" component="h3">
+              {t('taskDetail.descriptionLabel')}
+            </Typography>
+            {task.description ? (
               <Typography variant="body1" sx={{ mt: 0.5, whiteSpace: 'pre-wrap' }}>
                 {task.description}
               </Typography>
-            </Box>
-          ) : (
-            <Box sx={{ mb: 3 }}>
-              <Typography variant="overline" color="text.secondary">Description</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>No description provided.</Typography>
-            </Box>
-          )}
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                {t('taskDetail.noDescription')}
+              </Typography>
+            )}
+          </Box>
 
           {task.image && (
             <Box sx={{ mb: 3 }}>
-              <Typography variant="overline" color="text.secondary">Attachment</Typography>
+              <Typography variant="overline" color="text.secondary" component="h3">
+                {t('taskDetail.attachmentLabel')}
+              </Typography>
               <Box
                 component="img"
                 src={task.image}
-                alt="task attachment"
+                alt={t('task.imageAlt')}
                 sx={{ display: 'block', maxWidth: '100%', mt: 1, borderRadius: 2, boxShadow: 1 }}
               />
             </Box>

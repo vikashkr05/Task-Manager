@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RamSoft Task Manager</title>
+
+    <!--
+      OWASP A05: Security Misconfiguration
+      Content-Security-Policy restricts what resources the browser may load.
+      'unsafe-inline' / 'unsafe-eval' are required for Vite HMR in development
+      and for MUI's emotion CSS-in-JS; tighten to nonce-based CSP in production.
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src  'self' 'unsafe-inline' 'unsafe-eval';
+        style-src   'self' 'unsafe-inline';
+        img-src     'self' data: blob:;
+        font-src    'self' data:;
+        connect-src 'self' ws: wss:;
+        frame-src   'none';
+        object-src  'none';
+        base-uri    'self';
+        form-action 'self';
+      "
+    />
+
+    <!-- OWASP A05: Prevent MIME-type sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+
+    <!-- OWASP A05: Do not send the Referer header to external origins -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <!-- OWASP A05: Prevent clickjacking (belt-and-suspenders; HTTP header is authoritative) -->
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+
+    <!-- Accessibility: theme colour for browser chrome -->
+    <meta name="theme-color" content="#1565c0" />
+  </head>
+  <body>
+    <!--
+      Accessibility: the skip link rendered by <SkipLink /> targets this id.
+      The landmark is set by the Board component's <main id="main-content">.
+    -->
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+  </body>
+</html>

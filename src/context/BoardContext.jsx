@@ -1,6 +1,15 @@
 import { createContext, useContext, useReducer } from 'react';
+import { sanitizeText } from '../utils/security';
 
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
+// OWASP A03: strip HTML from all text fields before they enter the state tree.
+const sanitizePayload = ({ name, description, deadline, image }) => ({
+  name: sanitizeText(name),
+  description: sanitizeText(description),
+  deadline: deadline || '',
+  image: image || null,
+});
 
 const DEMO_TASKS = {
   't1': { id: 't1', name: 'Design database schema', description: 'Model the entities and relationships for the task manager', deadline: '2026-05-20', image: null, favorite: true },
@@ -22,7 +31,7 @@ export function boardReducer(state, action) {
   switch (action.type) {
     case 'ADD_TASK': {
       const id = generateId();
-      const task = { id, ...action.payload, favorite: false };
+      const task = { id, ...sanitizePayload(action.payload), favorite: false };
       return {
         ...state,
         tasks: { ...state.tasks, [id]: task },
@@ -34,11 +43,17 @@ export function boardReducer(state, action) {
       };
     }
     case 'EDIT_TASK': {
+      const existing = state.tasks[action.payload.id];
       return {
         ...state,
         tasks: {
           ...state.tasks,
-          [action.payload.id]: { ...state.tasks[action.payload.id], ...action.payload },
+          [action.payload.id]: {
+            ...existing,
+            ...sanitizePayload({ ...existing, ...action.payload }),
+            id: existing.id,
+            favorite: existing.favorite,
+          },
         },
       };
     }
@@ -68,7 +83,7 @@ export function boardReducer(state, action) {
       const id = generateId();
       return {
         ...state,
-        columns: [...state.columns, { id, name: action.name, taskIds: [] }],
+        columns: [...state.columns, { id, name: sanitizeText(action.name), taskIds: [] }],
       };
     }
     case 'TOGGLE_FAVORITE': {
@@ -107,14 +122,13 @@ const BoardContext = createContext(null);
 export function BoardProvider({ children }) {
   const [state, dispatch] = useReducer(boardReducer, initialState);
 
-  const addTask = (columnId, task) => dispatch({ type: 'ADD_TASK', columnId, payload: task });
-  const editTask = (task) => dispatch({ type: 'EDIT_TASK', payload: task });
-  const deleteTask = (taskId) => dispatch({ type: 'DELETE_TASK', taskId });
-  const moveTask = (taskId, fromColumnId, toColumnId) =>
-    dispatch({ type: 'MOVE_TASK', taskId, fromColumnId, toColumnId });
-  const addColumn = (name) => dispatch({ type: 'ADD_COLUMN', name });
-  const toggleFavorite = (taskId) => dispatch({ type: 'TOGGLE_FAVORITE', taskId });
-  const sortColumn = (columnId) => dispatch({ type: 'SORT_COLUMN', columnId });
+  const addTask      = (columnId, task)                  => dispatch({ type: 'ADD_TASK',       columnId, payload: task });
+  const editTask     = (task)                            => dispatch({ type: 'EDIT_TASK',      payload: task });
+  const deleteTask   = (taskId)                          => dispatch({ type: 'DELETE_TASK',    taskId });
+  const moveTask     = (taskId, fromColumnId, toColumnId)=> dispatch({ type: 'MOVE_TASK',      taskId, fromColumnId, toColumnId });
+  const addColumn    = (name)                            => dispatch({ type: 'ADD_COLUMN',     name });
+  const toggleFavorite = (taskId)                        => dispatch({ type: 'TOGGLE_FAVORITE',taskId });
+  const sortColumn   = (columnId)                        => dispatch({ type: 'SORT_COLUMN',    columnId });
 
   return (
     <BoardContext.Provider value={{ state, addTask, editTask, deleteTask, moveTask, addColumn, toggleFavorite, sortColumn }}>

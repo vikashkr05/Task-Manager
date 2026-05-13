@@ -1,0 +1,69 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "goBack": "go back",
+    "addToFavorites": "add to favorites",
+    "removeFromFavorites": "remove from favorites",
+    "favorite": "Favorite",
+    "close": "Close"
+  },
+  "board": {
+    "title": "Task Board",
+    "addColumn": "Add Column",
+    "addColumnDialogTitle": "Add New Column",
+    "columnNameLabel": "Column Name",
+    "addColumnBtn": "Add Column",
+    "switchLang": "Switch language"
+  },
+  "column": {
+    "addTask": "Add Task",
+    "sortAriaLabel": "sort column",
+    "taskCount": "({{count}})"
+  },
+  "task": {
+    "duePrefix": "Due:",
+    "viewDetails": "view task details",
+    "editAriaLabel": "edit task",
+    "deleteAriaLabel": "delete task",
+    "moveAriaLabel": "move task to column",
+    "imageAlt": "Task attachment"
+  },
+  "taskDialog": {
+    "addTitle": "Add Task",
+    "editTitle": "Edit Task",
+    "nameLabel": "Task Name",
+    "descriptionLabel": "Description",
+    "deadlineLabel": "Deadline",
+    "attachImage": "Attach Image",
+    "removeImage": "Remove Image",
+    "imagePreview": "Image preview",
+    "addBtn": "Add Task",
+    "saveBtn": "Save Changes",
+    "nameRequired": "Name is required",
+    "nameTooLong": "Name must be 200 characters or fewer",
+    "descriptionTooLong": "Description must be 2,000 characters or fewer",
+    "invalidDate": "Please enter a valid date (YYYY-MM-DD)",
+    "invalidFile": "Only JPEG, PNG, GIF, or WebP images are accepted",
+    "fileTooLarge": "Image must be smaller than 5 MB"
+  },
+  "taskDetail": {
+    "heading": "Task Details",
+    "notFound": "Task not found.",
+    "backToBoard": "Back to Board",
+    "columnLabel": "Column",
+    "deadlineLabel": "Deadline",
+    "descriptionLabel": "Description",
+    "noDescription": "No description provided.",
+    "attachmentLabel": "Attachment",
+    "favoriteChip": "Favorite"
+  },
+  "a11y": {
+    "skipToMain": "Skip to main content",
+    "boardRegion": "Task board",
+    "taskAdded": "Task added",
+    "taskUpdated": "Task updated",
+    "taskDeleted": "Task deleted",
+    "taskMoved": "Task moved"
+  }
+}
